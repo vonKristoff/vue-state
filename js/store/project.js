@@ -33,8 +33,9 @@ export default {
                 }, 2000)
             })
         },
-        getPromiseData() {
+        getPromiseData({ state }) {
             return new Promise((resolve, reject) => {
+                console.log('processing..', state.id)
                 setTimeout(() => {
                     resolve(Math.random())
                 }, 1000)
