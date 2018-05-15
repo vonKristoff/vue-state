@@ -4,6 +4,7 @@ import Buble from 'rollup-plugin-buble'
 import Uglify from 'rollup-plugin-uglify'
 import eslint from 'rollup-plugin-eslint'
 import replace from 'rollup-plugin-replace'
+import alias from 'rollup-plugin-alias'
 import html from 'rollup-plugin-html'
 import json from 'rollup-plugin-json'
 import { minify } from 'uglify-js'
@@ -17,13 +18,22 @@ const sourcemap = (process.env.NODE_ENV === 'development')
 export default {
     input,
     output: { format, name, file, sourcemap },
-    plugins: [
+    plugins: [        
+        html({ include: 'js/templates/*.html' }),
+        json({ include: 'js/*.json' }),        
         Resolve({
             jsnext: true,
             main: true
-        }),        
-        html({ include: 'js/templates/*.html' }),
-        json({ include: 'js/*.json' }),        
+        }),
+        replace({
+            exclude: 'node_modules/**',
+            ENV: JSON.stringify(process.env.NODE_ENV || 'development'),
+            'process.env.NODE_ENV': JSON.stringify('production')
+        }),     
+        alias({
+            vue: 'vue/dist/vue.js', // doesnt work bah
+            vuex: 'vue/dist/vuex.js'
+        }),
         Buble({
             transforms: {                
                 classes: true,
@@ -35,13 +45,9 @@ export default {
             exclude: "./node_modules",
             file: 'public/bundle.js',
             source: 'js/main.js'
-        }),
+        }),        
         Commonjs({
             include: 'node_modules/**',
-        }),
-        replace({
-            exclude: 'node_modules/**',
-            ENV: JSON.stringify(process.env.NODE_ENV || 'development')
         }),
         eslint(),
         (process.env.NODE_ENV === 'production' && Uglify({}, minify))

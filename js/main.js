@@ -1,5 +1,9 @@
-console.log('heelo world')
+import Vue from 'vue/dist/vue'
+import State from './state'
+import App from './app'
 
-if (ENV !== 'production') {
-    console.log('Logging is enabled!');
-}
+// window.$vx = {
+//     engine: new Vue(State),
+//     tank: new Vue(State)
+// }
+window.app = new Vue(App)
